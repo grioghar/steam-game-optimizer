@@ -6,6 +6,11 @@
 - [ ] Stream-health readout on the Dashboard (bitrate, dropped frames, latency from Steam's streaming log)
 - [ ] Apps tab: "learn" mode — snapshot the apps open at game start and suggest rules
 
+## Strict "clean taskbar" mode
+- [ ] Close Microsoft Store (UWP) app windows too (Outlook, Store, Settings, Calculator…) — they're hosted by `ApplicationFrameHost` and currently invisible to the optimizer
+- [ ] Close extra File Explorer folder windows (leave the shell/taskbar alone) and reopen the same folders afterward
+- [ ] "Match my taskbar" helper: one click to set every non-pinned/non-listed app to Close
+
 ## Detection & reliability
 - [ ] Verify and harden Remote Play host detection against more Steam client versions
 - [ ] Detect and handle Microsoft Store (UWP) apps hosted by `ApplicationFrameHost`

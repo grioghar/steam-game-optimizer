@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- Stricter default Keep list: only Claude and remote-access/streaming tools (Tailscale, Sunshine, Parsec, AnyDesk, TeamViewer, RustDesk) are kept; Discord, OBS, overlay tools and terminals are now closed during a game unless you add a Keep rule. Existing installs keep their current rules.
+
 ## [0.1.0] - 2026-11-05
 
 First release.

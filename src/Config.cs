@@ -50,8 +50,8 @@ namespace SteamOptimizer
         public static AppConfig CreateDefault()
         {
             AppConfig c = new AppConfig();
-            string[] keep = { "discord", "tailscale-ipn", "tailscale", "parsec", "parsecd", "sunshine", "anydesk", "teamviewer", "rustdesk",
-                "obs64", "msiafterburner", "rtss", "nvidia share", "nvcontainer", "claude", "windowsterminal", "powershell", "pwsh", "cmd" };
+            // Strict by default: only Claude plus remote-access/streaming plumbing survive. Every other windowed app is closed.
+            string[] keep = { "claude", "tailscale-ipn", "tailscale", "sunshine", "parsecd", "anydesk", "teamviewer", "rustdesk" };
             foreach (string k in keep) c.Rules[k] = Act.Keep;
             c.Streaming.KeepAwake = true;
             c.Local.KeepAwake = false;
