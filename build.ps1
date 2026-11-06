@@ -25,6 +25,7 @@ $exe = Join-Path $out 'SteamOptimizer.exe'
 & $csc /nologo /target:winexe /optimize+ /platform:anycpu "/out:$exe" "/win32icon:$ico" `
   /r:System.dll /r:System.Core.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.Management.dll `
   /r:System.ServiceProcess.dll /r:System.Web.Extensions.dll `
+  (Get-ChildItem (Join-Path $root 'examples') -Filter *.json | ForEach-Object { "/resource:$($_.FullName),ex.$($_.Name)" }) `
   (Get-ChildItem (Join-Path $root 'src') -Filter *.cs | ForEach-Object FullName)
 if ($LASTEXITCODE -ne 0) { throw "Build failed" }
 Write-Host "Built $exe"

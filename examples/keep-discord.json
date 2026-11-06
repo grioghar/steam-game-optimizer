@@ -1,0 +1,7 @@
+{
+  "_comment": "Small additive tweak: also keep Discord open. Merged into your existing rules.",
+  "Name": "Keep Discord",
+  "Rules": {
+    "discord": "Keep"
+  }
+}

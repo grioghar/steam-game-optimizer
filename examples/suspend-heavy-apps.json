@@ -1,0 +1,13 @@
+{
+  "_comment": "Freeze browsers and chat apps instead of closing them (instant, exact resume afterwards); quit music/video players. Use \"auto\" to remove a rule.",
+  "Name": "Suspend heavy apps",
+  "Rules": {
+    "firefox": "Suspend",
+    "chrome": "Suspend",
+    "msedge": "Suspend",
+    "slack": "Suspend",
+    "spotify": "Close",
+    "vlc": "Close",
+    "notepad": "auto"
+  }
+}

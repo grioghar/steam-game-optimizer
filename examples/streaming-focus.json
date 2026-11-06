@@ -1,0 +1,15 @@
+{
+  "_comment": "Tunes only the Streaming profile: best power plan, no sleep, stop background services (needs admin for the services), and don't touch Local play.",
+  "Name": "Streaming focus",
+  "Streaming": {
+    "Enabled": true,
+    "CloseApps": true,
+    "PowerPlan": "high",
+    "HighPriority": true,
+    "SuppressToasts": true,
+    "KeepAwake": true,
+    "TrimMemory": true,
+    "StopServices": ["SysMain", "WSearch"]
+  },
+  "StreamIndicators": ["streaming_client", "sunshine"]
+}

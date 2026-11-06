@@ -4,7 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+- JSON presets: drop a `.json` file into `%APPDATA%\SteamOptimizer\presets\` (or use Settings → *Import preset…*) to change settings. Partial files merge; `!` suffix replaces; `ImportMode: "replace"` resets to defaults; validation is all-or-nothing with rejected files explained. *Export current settings…* and *Open presets folder* buttons.
+- Example presets (`examples/`, also unpacked to the presets folder) and full documentation in `docs/CONFIGURATION.md`.
+- Self-tests for the preset importer.
+
 ### Changed
+- Default stream indicators are now just `streaming_client` (an always-on Sunshine/Parsec/Moonlight no longer makes every game count as streaming).
 - Stricter default Keep list: only Claude and remote-access/streaming tools (Tailscale, Sunshine, Parsec, AnyDesk, TeamViewer, RustDesk) are kept; Discord, OBS, overlay tools and terminals are now closed during a game unless you add a Keep rule. Existing installs keep their current rules.
 
 ## [0.1.0] - 2026-11-05

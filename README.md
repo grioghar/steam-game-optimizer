@@ -34,6 +34,20 @@ Prefer no installer? `SteamOptimizer.exe` on the release page is a portable buil
 
 Defaults keep Discord, Tailscale, Parsec, Sunshine, AnyDesk, TeamViewer, OBS, overlay tools, Claude and terminals. **Turn on *Dry run* in Settings for your first session** to see what it would do without changing anything.
 
+## Presets: configure with a JSON file
+
+Drop a `.json` file into `%APPDATA%\SteamOptimizer\presets\` (Settings → *Open presets folder*) or use Settings → *Import preset…*, and it's applied automatically. Presets can be tiny — they only change what they mention — and *Export current settings…* gives you a file to back up or move to another PC. For example, to keep only Claude (plus remote-access tools) open during games:
+
+```json
+{
+  "Name": "Strict - only Claude",
+  "DefaultWindowed": "Close",
+  "Rules!": { "claude": "Keep", "tailscale-ipn": "Keep", "sunshine": "Keep" }
+}
+```
+
+Full reference, merge/replace rules and more examples: **[docs/CONFIGURATION.md](docs/CONFIGURATION.md)**. Ready-made presets are in [`examples/`](examples).
+
 ## How it works
 
 - Polls `HKCU\Software\Valve\Steam\RunningAppID` every 1.5 s; looks up the game name/install folder from the `appmanifest_*.acf` files in your Steam libraries.

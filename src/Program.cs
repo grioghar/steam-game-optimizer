@@ -70,8 +70,44 @@ namespace SteamOptimizer
             catch { return false; }
         }
 
+        static void PresetTests()
+        {
+            AppConfig c = AppConfig.CreateDefault();
+            PresetResult r = Preset.Apply(c, "{\"Rules\":{\"Discord.exe\":\"keep\",\"firefox\":\"Suspend\",\"claude\":\"auto\"},\"ExtraTriggers\":[\"a.exe\",\"A.exe\"],\"Local\":{\"KeepAwake\":true},\"CloseTimeoutSec\":12,\"Bogus\":1}");
+            Check("preset merge applies", r.Ok && c.Rules["discord"] == Act.Keep && c.Rules["firefox"] == Act.Suspend && c.CloseTimeoutSec == 12 && c.Local.KeepAwake);
+            Check("preset 'auto' removes a rule", !c.Rules.ContainsKey("claude"));
+            Check("preset list merge de-duplicates", c.ExtraTriggers.Count == 1);
+            Check("preset unknown key is only a warning", r.Lines.Exists(delegate(string l) { return l.StartsWith("warning"); }));
+            Check("preset merge keeps untouched rules", c.Rules.ContainsKey("tailscale-ipn"));
+
+            r = Preset.Apply(c, "{\"Rules!\":{\"only\":\"Close\"},\"ExtraTriggers!\":[\"z\"]}");
+            Check("preset '!' replaces rules and lists", r.Ok && c.Rules.Count == 1 && c.Rules["only"] == Act.Close && c.ExtraTriggers.Count == 1 && c.ExtraTriggers[0] == "z");
+
+            r = Preset.Apply(c, "{\"ImportMode\":\"replace\",\"Rules\":{\"x\":\"Close\"}}");
+            Check("preset replace resets to defaults first", r.Ok && c.Rules.Count == AppConfig.CreateDefault().Rules.Count + 1 && !c.Rules.ContainsKey("only"));
+
+            r = Preset.Apply(c, "{\"RemoveRules\":[\"X.exe\"]}");
+            Check("preset RemoveRules", r.Ok && !c.Rules.ContainsKey("x"));
+
+            int before = c.CloseTimeoutSec; int rules = c.Rules.Count;
+            r = Preset.Apply(c, "{\"CloseTimeoutSec\":99,\"Rules\":{\"bad\":\"Explode\"}}");
+            Check("invalid preset is rejected atomically", !r.Ok && c.CloseTimeoutSec == before && c.Rules.Count == rules);
+            r = Preset.Apply(c, "{ not json");
+            Check("malformed JSON is rejected", !r.Ok);
+            r = Preset.Apply(c, "{\"DefaultWindowed\":\"suspend\",\"Streaming\":{\"StopServices\":[\"SysMain\"],\"PowerPlan\":\"high\"}}");
+            Check("preset profile + default action", r.Ok && c.DefaultWindowed == Act.Suspend && c.Streaming.StopServices.Contains("SysMain"));
+
+            // every bundled example must parse and apply cleanly
+            foreach (string f in Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "examples"), "*.json"))
+            {
+                AppConfig t = AppConfig.CreateDefault(); PresetResult pr = Preset.Apply(t, File.ReadAllText(f));
+                Check("example " + Path.GetFileName(f), pr.Ok && !pr.Lines.Exists(delegate(string l) { return l.StartsWith("warning"); }));
+            }
+        }
+
         public static int Run()
         {
+            PresetTests();
             Store.LogLine += delegate(string l) { Console.WriteLine("      " + l); };
             AppConfig cfg = new AppConfig();
             cfg.Rules["notepad"] = Act.Close;

@@ -1,0 +1,5 @@
+{
+  "_comment": "Also trigger optimization for games launched outside Steam. Lists are merged; use \"ExtraTriggers!\" to replace the list instead.",
+  "Name": "Non-Steam games",
+  "ExtraTriggers": ["eldenring.exe", "Cyberpunk2077.exe"]
+}

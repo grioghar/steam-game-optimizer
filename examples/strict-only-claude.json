@@ -1,0 +1,16 @@
+{
+  "_comment": "Clean taskbar: during a game only Claude and remote-access/streaming tools stay open. Everything else with a window is closed and reopened afterwards.",
+  "Name": "Strict - only Claude",
+  "DefaultWindowed": "Close",
+  "DefaultBackground": "Keep",
+  "Rules!": {
+    "claude": "Keep",
+    "tailscale-ipn": "Keep",
+    "tailscale": "Keep",
+    "sunshine": "Keep",
+    "parsecd": "Keep",
+    "anydesk": "Keep",
+    "teamviewer": "Keep",
+    "rustdesk": "Keep"
+  }
+}

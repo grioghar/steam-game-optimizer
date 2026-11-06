@@ -24,6 +24,8 @@ namespace SteamOptimizer
         DateTime? firstSeen, goneSince;
         string attemptedKey = "";
         GameState lastGame = new GameState();
+        TabControl tabs;
+        int scanCounter;
 
         // dashboard
         Label lblState, lblSub, lblStats;
@@ -52,7 +54,8 @@ namespace SteamOptimizer
             Size = new Size(980, 700); MinimumSize = new Size(860, 560);
             StartPosition = FormStartPosition.CenterScreen;
 
-            TabControl tabs = new TabControl(); tabs.Dock = DockStyle.Fill; tabs.Padding = new Point(14, 6);
+            Preset.EnsureFolders();
+            tabs = new TabControl(); tabs.Dock = DockStyle.Fill; tabs.Padding = new Point(14, 6);
             tabs.TabPages.Add(BuildDashboard());
             tabs.TabPages.Add(BuildApps());
             tabs.TabPages.Add(BuildProfiles());
@@ -131,7 +134,81 @@ namespace SteamOptimizer
         // ================= automation loop =================
         void OnTick(object s, EventArgs e)
         {
+            if (++scanCounter % 2 == 0) { try { ScanPresets(); } catch (Exception ex) { Store.Log("Preset scan error: " + ex.Message); } }
             try { Tick(); } catch (Exception ex) { Store.Log("Monitor error: " + ex.Message); }
+        }
+
+        // ================= presets (JSON import) =================
+        /// <summary>Applies any .json files dropped into the presets folder, then files them under applied/ or rejected/.</summary>
+        void ScanPresets()
+        {
+            if (!Directory.Exists(Preset.Dir)) return;
+            foreach (string file in Directory.GetFiles(Preset.Dir, "*.json"))
+            {
+                string text;
+                try { text = File.ReadAllText(file); } catch (IOException) { continue; }   // still being copied - try next scan
+                bool ok = ImportText(text, Path.GetFileName(file));
+                string stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-";
+                string dest = Path.Combine(ok ? Preset.AppliedDir : Preset.RejectedDir, stamp + Path.GetFileName(file));
+                try { File.Move(file, dest); } catch { try { File.Delete(file); } catch { } }
+            }
+        }
+
+        /// <summary>Applies preset JSON; logs the outcome and rebuilds the UI. Returns true if applied.</summary>
+        bool ImportText(string json, string label)
+        {
+            PresetResult r = Preset.Apply(cfg, json);
+            Store.Log("Preset '" + (r.Name.Length > 0 ? r.Name : label) + "' (" + label + "): " + (r.Ok ? "applied, " + r.Changes + " change(s)" : "REJECTED - nothing was changed"));
+            foreach (string l in r.Lines) Store.Log("   " + l);
+            if (r.Ok)
+            {
+                SaveCfg();
+                if (r.Touched.Contains("startwithwindows")) SetAutoStart(cfg.StartWithWindows);
+                RebuildUi();
+                Toast("Preset applied", r.Name.Length > 0 ? r.Name : label);
+            }
+            else
+            {
+                Toast("Preset rejected", label + " - see the log");
+                try { File.WriteAllText(Path.Combine(Preset.RejectedDir, DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + label + ".txt"), string.Join("\r\n", r.Lines.ToArray())); } catch { }
+            }
+            return r.Ok;
+        }
+
+        void RebuildUi()
+        {
+            int sel = tabs.SelectedIndex;
+            tabs.SuspendLayout();
+            tabs.TabPages.RemoveAt(3); tabs.TabPages.RemoveAt(2); tabs.TabPages.RemoveAt(1);
+            tabs.TabPages.Insert(1, BuildApps()); tabs.TabPages.Insert(2, BuildProfiles()); tabs.TabPages.Insert(3, BuildSettings());
+            tabs.SelectedIndex = Math.Min(sel, tabs.TabPages.Count - 1);
+            tabs.ResumeLayout();
+            RefreshApps();
+        }
+
+        void ImportDialog()
+        {
+            using (OpenFileDialog d = new OpenFileDialog())
+            {
+                d.Title = "Import a preset"; d.Filter = "JSON presets (*.json)|*.json|All files|*.*"; d.InitialDirectory = Preset.ExamplesDir;
+                if (d.ShowDialog() != DialogResult.OK) return;
+                try
+                {
+                    bool ok = ImportText(File.ReadAllText(d.FileName), Path.GetFileName(d.FileName));
+                    MessageBox.Show(ok ? "Preset applied." : "The preset was rejected - nothing was changed. See the Dashboard log for details.", "Import preset");
+                }
+                catch (Exception ex) { MessageBox.Show("Could not read the file: " + ex.Message); }
+            }
+        }
+
+        void ExportDialog()
+        {
+            using (SaveFileDialog d = new SaveFileDialog())
+            {
+                d.Title = "Export current settings"; d.Filter = "JSON (*.json)|*.json"; d.FileName = "steam-optimizer-settings.json";
+                if (d.ShowDialog() != DialogResult.OK) return;
+                try { Store.Save(d.FileName, cfg); } catch (Exception ex) { MessageBox.Show("Export failed: " + ex.Message); }
+            }
         }
 
         void Tick()
@@ -444,6 +521,14 @@ namespace SteamOptimizer
             f.Controls.Add(Chk("Also optimize when this PC is the Remote Play client", cfg.OptimizeForStreamingClient, delegate(bool v) { cfg.OptimizeForStreamingClient = v; }));
             f.Controls.Add(Lines("Non-Steam game executables that should also trigger optimization (one per line, e.g. eldenring.exe):", cfg.ExtraTriggers));
             f.Controls.Add(Lines("Processes that mean \"a stream is active\" (one per line):", cfg.StreamIndicators));
+
+            f.Controls.Add(Head("Presets (JSON)"));
+            f.Controls.Add(new Label { AutoSize = true, ForeColor = Color.DimGray, Text = "Drop a .json preset into the presets folder (applied automatically) or import one here.\r\nExamples are in presets\\examples. Imported files merge into your settings unless they say otherwise." });
+            FlowLayoutPanel prow = new FlowLayoutPanel { AutoSize = true };
+            Button pi = new Button { Text = "Import preset...", AutoSize = true }; pi.Click += delegate { ImportDialog(); };
+            Button pe = new Button { Text = "Export current settings...", AutoSize = true }; pe.Click += delegate { ExportDialog(); };
+            Button pf = new Button { Text = "Open presets folder", AutoSize = true }; pf.Click += delegate { Preset.EnsureFolders(); Process.Start("explorer.exe", "\"" + Preset.Dir + "\""); };
+            prow.Controls.Add(pi); prow.Controls.Add(pe); prow.Controls.Add(pf); f.Controls.Add(prow);
 
             f.Controls.Add(Head("Elevation & files"));
             Label adm = new Label { AutoSize = true, Text = "Running as administrator: " + (Optimizer.IsElevated() ? "yes" : "no  (only needed to stop Windows services; apps you restore will also run elevated)") };

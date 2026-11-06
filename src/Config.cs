@@ -33,7 +33,7 @@ namespace SteamOptimizer
         public ModeProfile Local = new ModeProfile();
         public ModeProfile Streaming = new ModeProfile();
         public List<string> ExtraTriggers = new List<string>();        // non-Steam game exes
-        public List<string> StreamIndicators = new List<string>(new string[] { "streaming_client", "sunshine", "parsec", "moonlight" });
+        public List<string> StreamIndicators = new List<string>(new string[] { "streaming_client" });
         public bool OptimizeForStreamingClient = true;
         public bool StartWithWindows = false;
         public bool StartMinimized = true;

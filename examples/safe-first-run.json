@@ -1,0 +1,7 @@
+{
+  "_comment": "Log what would happen without changing anything. Re-import with DryRun false (or untick it in Settings) when you're happy.",
+  "Name": "Safe first run (dry run)",
+  "DryRun": true,
+  "StartDelaySec": 3,
+  "EndGraceSec": 5
+}
