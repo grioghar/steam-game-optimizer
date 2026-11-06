@@ -2,7 +2,7 @@
 
 A small native Windows tray app that notices when you start a Steam game — to play locally **or to stream with Steam Remote Play** — and clears the decks: it closes or freezes the apps you don't need, switches to a performance power plan, quiets notifications and keeps the PC awake. When the game exits, everything goes back the way it was.
 
-> Status: **v0.1.0**, first release. Tested end to end on a real Remote Play session (host: Windows 11 PC, client: Steam Deck). See [CHANGELOG](CHANGELOG.md) and [TODO](TODO.md).
+> Status: **v0.2.0**. Tested end to end on a real Remote Play session (host: Windows 11 PC, client: Steam Deck). See [CHANGELOG](CHANGELOG.md) and [TODO](TODO.md).
 
 ## Features
 
@@ -16,7 +16,7 @@ A small native Windows tray app that notices when you start a Steam game — to 
 
 ## Install
 
-1. Download `SteamOptimizer-Setup-0.1.0.exe` from the [latest release](../../releases/latest).
+1. Download `SteamOptimizer-Setup-0.2.0.exe` from the [latest release](../../releases/latest).
 2. Run it and choose your options. Windows SmartScreen may warn that the file is unsigned — see [Security](#security-notes).
 3. Look for the bolt icon in the system tray. Double-click it to open the settings.
 

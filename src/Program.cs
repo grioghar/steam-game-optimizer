@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Steam Game Optimizer")]
-[assembly: System.Reflection.AssemblyVersion("0.1.0.0")]
+[assembly: System.Reflection.AssemblyVersion("0.2.0.0")]
 
 namespace SteamOptimizer
 {

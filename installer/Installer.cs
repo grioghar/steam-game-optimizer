@@ -8,13 +8,13 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Steam Game Optimizer Setup")]
-[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyVersion("0.2.0.0")]
 
 namespace SteamOptimizerSetup
 {
     static class Setup
     {
-        const string Version = "0.1.0";
+        const string Version = "0.2.0";
         const string AppName = "Steam Game Optimizer";
         const string UninstKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\SteamGameOptimizer";
         const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";

@@ -31,7 +31,7 @@ if ($LASTEXITCODE -ne 0) { throw "Build failed" }
 Write-Host "Built $exe"
 
 # Installer: a small per-user setup exe with the app embedded (no admin rights, no external tooling)
-$setup = Join-Path $out 'SteamOptimizer-Setup-0.1.0.exe'
+$setup = Join-Path $out 'SteamOptimizer-Setup-0.2.0.exe'
 & $csc /nologo /target:winexe /optimize+ "/out:$setup" "/win32icon:$ico" "/resource:$exe,app.exe" `
   /r:System.dll /r:System.Core.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll `
   (Join-Path $root 'installer\Installer.cs')

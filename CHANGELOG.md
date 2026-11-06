@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2026-11-06
 
 ### Added
 - JSON presets: drop a `.json` file into `%APPDATA%\SteamOptimizer\presets\` (or use Settings → *Import preset…*) to change settings. Partial files merge; `!` suffix replaces; `ImportMode: "replace"` resets to defaults; validation is all-or-nothing with rejected files explained. *Export current settings…* and *Open presets folder* buttons.
@@ -32,4 +32,5 @@ First release.
 - Remote Play host detection is heuristic (recent `streaming_log.txt` activity).
 - Binaries are unsigned.
 
+[0.2.0]: ../../releases/tag/v0.2.0
 [0.1.0]: ../../releases/tag/v0.1.0
